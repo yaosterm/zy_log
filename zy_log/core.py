@@ -6,6 +6,7 @@ import pkgutil
 import atexit
 from queue import Queue
 from logging.handlers import QueueHandler, QueueListener
+import pathlib
 
 # 确保我们的自定义类被注册
 from . import loggers
@@ -117,6 +118,19 @@ def setup_logging(
             fmt=config['formatters']['standard_file']['format'],
             datefmt=config['formatters']['standard_file']['datefmt']
         )
+
+        log_file_path_str = file_config['filename']
+
+        try:
+            log_path = pathlib.Path(log_file_path_str)
+            log_dir = log_path.parent
+
+            if not log_dir.exists():
+                log_dir.mkdir(parents=True,exist_ok=True)
+
+        except Exception as e:
+            print(f"CRITICAL [zy_log]: cannot create directory {log_dir},wrong:{e}",flush=True)
+
         file_handler = logging.handlers.RotatingFileHandler(
             filename=file_config['filename'],
             maxBytes=file_config['maxBytes'],

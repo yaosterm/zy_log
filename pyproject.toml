@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zy_log"
+version = "0.1.0" # 版本升级
+authors = [
+  { name="zy", email="zhoumuci77@gamil.com" },
+]
+description = "An advanced, asynchronous logging system for algorithmic projects."
+readme = "README.md"
+requires-python = ">=3.8"
+
+license = "MIT"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: System :: Logging",
+]
+# 依赖项变更：
+dependencies = [
+    "rich>=13.0.0", # 替换 colorama
+]
+
+[project.urls]
+"Homepage" = "https://github.com/yaosterm/zy_log"
+"Bug Tracker" = "https://github.com/yaosterm/zy_log/issues"

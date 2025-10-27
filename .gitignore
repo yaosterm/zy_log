@@ -1,0 +1,21 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# PyCharm/IDE config
+.idea/
+*.iml
+
+# pip install output
+*.egg-info/
+dist/
+build/
+
+# Log files
+*.log
+*.log.*
+
+# Conda/Venv (如果您的环境在项目内)
+venv/
+zy/
+.venv/

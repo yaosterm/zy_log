@@ -25,14 +25,17 @@ from .loggers import AlgorithmicLogger
 
 logging.setLoggerClass(AlgorithmicLogger)
 
-def get_logger(name: str) -> logging.Logger:
+def get_logger(name: str) -> AlgorithmicLogger:
     """
     获取一个 Logger 实例。
 
     因为我们已经调用了 logging.setLoggerClass()，
     这个函数将自动返回一个 AlgorithmicLogger 实例。
     """
-    return logging.getLogger(name)
+    logger_instance = logging.getLogger(name)
+    if not isinstance(logger_instance, AlgorithmicLogger):
+        logger_instance.__class__ = AlgorithmicLogger
+    return logger_instance
 
 # 控制 'from zy_log import *' 的行为
 __all__ = [

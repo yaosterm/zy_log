@@ -6,7 +6,7 @@ from logging import LoggerAdapter  # 导入 LoggerAdapter
 
 # --- 演示特性 1: 动态配置 ---
 # 1.1. 通过环境变量设置级别
-os.environ['LOG_LEVEL'] = 'DEBUG'  # 覆盖 JSON 中的 INFO 级别
+os.environ['LOG_LEVEL'] = 'INFO'  # 覆盖 JSON 中的 INFO 级别
 
 # 1.2. 通过参数传递动态文件名
 log_filename = f"run_{time.strftime('%Y%m%d_%H%M%S')}.log"

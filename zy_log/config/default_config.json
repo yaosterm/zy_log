@@ -23,5 +23,12 @@
             "rich_tracebacks": true,
             "tracebacks_show_locals": true
         }
-    }
+    },
+     "loggers": {
+        "": {
+          "handlers": ["console_rich", "file"],
+          "level": "INFO",
+          "propagate": true
+        }
+      }
 }

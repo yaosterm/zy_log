@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "zy_log"
-version = "0.1.1" # 版本升级
+version = "0.1.2" # 版本升级
 authors = [
   { name="zy", email="zhoumuci77@gamil.com" },
 ]

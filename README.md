@@ -41,6 +41,9 @@ os.environ['LOG_LEVEL'] = 'INFO' # 生产环境
 zy_log.setup_logging(log_file_override=log_filename)
 # --- 初始化完成 ---
 
+# 默认模式下，无需指定文件名：日志会写入项目根目录的 `log/<YYYY-MM-DD>/<basename>_<HH-MM-SS>.log`，
+# 同一天的运行会自动聚合到同一日期文件夹中，便于快速定位每次运行。
+
 # 获取主模块的 logger
 logger = zy_log.get_logger(__name__)
 

@@ -2,7 +2,9 @@ import logging
 import logging.config
 import json
 import os
+import sys
 import pkgutil
+import datetime
 import atexit
 from queue import Queue
 from logging.handlers import QueueHandler, QueueListener
@@ -21,6 +23,7 @@ except ImportError:
 
 # 用于存储 Listener，以便程序退出时安全停止
 _listener: QueueListener = None
+_previous_excepthook = sys.excepthook
 
 
 def setup_logging(
@@ -74,8 +77,33 @@ def setup_logging(
 
     # 2.3. 自动创建日志目录
     final_log_file_path = config['handlers_templates']['file']['filename']
+    log_path = pathlib.Path(final_log_file_path)
+
+    # 统一相对路径，确保落到当前工作目录下
+    if log_path.parent == pathlib.Path('.'):  # 例如 "default_algorithm.log"
+        base_dir = pathlib.Path.cwd() / 'log'
+        log_path = base_dir / log_path.name
+    elif not log_path.is_absolute():
+        base_dir = pathlib.Path.cwd() / log_path.parent
+        log_path = base_dir / log_path.name
+    else:
+        base_dir = log_path.parent
+
+    # 默认模式：为每天创建一个文件夹，并为每次运行生成带时间戳的文件名
+    if log_file_override is None:
+        now = datetime.datetime.now()
+        date_folder = now.strftime("%Y-%m-%d")
+        run_stamp = now.strftime("%H-%M-%S")
+
+        dated_dir = base_dir / date_folder
+        stem = log_path.stem or "run"
+        suffix = log_path.suffix or ".log"
+        log_path = dated_dir / f"{stem}_{run_stamp}{suffix}"
+
+    final_log_file_path = str(log_path)
+    config['handlers_templates']['file']['filename'] = final_log_file_path
+
     try:
-        log_path = pathlib.Path(final_log_file_path)
         log_dir = log_path.parent
         if not log_dir.exists():
             log_dir.mkdir(parents=True, exist_ok=True)
@@ -161,6 +189,9 @@ def setup_logging(
     _listener.start()
     atexit.register(_listener.stop)
 
+    # 捕获未处理异常，自动写入日志
+    _install_exception_hook()
+
     # --- [ v0.1.2 新功能：智能滚屏分隔符 ] ---
     try:
         init_logger = logging.getLogger("zy_log.init")
@@ -181,7 +212,31 @@ def setup_logging(
     except Exception:
         pass
 
+def _install_exception_hook():
+    """安装全局异常钩子，自动将未捕获的错误写入日志文件。"""
+    global _previous_excepthook
 
+    # 避免重复安装
+    if getattr(_install_exception_hook, "_installed", False):
+        return
+
+    def _log_uncaught_exception(exc_type, exc_value, exc_traceback):
+        logger = logging.getLogger("zy_log.unhandled")
+        logger.error(
+            "检测到未处理异常，已自动记录。",
+            exc_info=(exc_type, exc_value, exc_traceback)
+        )
+
+        if _previous_excepthook not in (None, sys.__excepthook__, _log_uncaught_exception):
+            try:
+                _previous_excepthook(exc_type, exc_value, exc_traceback)
+            except Exception:
+                # 防止钩子中的错误导致程序崩溃
+                logger.debug("原始 excepthook 调用失败，已忽略。", exc_info=True)
+
+    _previous_excepthook = sys.excepthook
+    sys.excepthook = _log_uncaught_exception
+    _install_exception_hook._installed = True
 
 
 

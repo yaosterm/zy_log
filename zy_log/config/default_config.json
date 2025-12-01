@@ -3,7 +3,7 @@
     "disable_existing_loggers": false,
     "formatters": {
         "standard_file": {
-            "format": "%(asctime)s - %(name)s - %(levelname)-8s - %(message)s (%(filename)s:%(lineno)d)",
+            "format": "%(asctime)s | PID:%(process)d | %(name)s | %(levelname)-8s | %(message)s | [%(filename)s:%(lineno)d]",
             "datefmt": "%Y-%m-%d %H:%M:%S"
         }
     },
@@ -12,7 +12,7 @@
             "class": "logging.handlers.RotatingFileHandler",
             "level": "DEBUG",
             "formatter": "standard_file",
-            "filename": "default_algorithm.log",
+            "filename": "log/default_algorithm.log",
             "maxBytes": 10485760,
             "backupCount": 5,
             "encoding": "utf-8"
@@ -24,11 +24,14 @@
             "tracebacks_show_locals": true
         }
     },
-     "loggers": {
+    "loggers": {
         "": {
-          "handlers": ["console_rich", "file"],
-          "level": "INFO",
-          "propagate": true
+            "handlers": [
+                "console_rich",
+                "file"
+            ],
+            "level": "INFO",
+            "propagate": true
         }
-      }
+    }
 }

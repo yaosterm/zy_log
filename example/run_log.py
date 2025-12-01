@@ -13,7 +13,7 @@ log_filename = f"run_{time.strftime('%Y%m%d_%H%M%S')}.log"
 
 # 在算法开始时，设置一次日志系统
 # 传入动态文件名
-zy_log.setup_logging(log_file_override=log_filename)
+zy_log.setup_logging()
 
 
 # --- 演示特性 3: 上下文注入 ---
